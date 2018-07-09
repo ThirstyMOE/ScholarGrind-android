@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CollegeGrind</string>
+    <string name="open_button_text">Open</string>
+    <string name="new_button_text">New</string>
+    <string name="next">Next</string>
+    <string name="take_picture">Take Picture</string>
+</resources>
