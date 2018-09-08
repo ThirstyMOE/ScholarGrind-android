@@ -25,92 +25,33 @@ import java.util.Date;
 
 public class NewNoteActivity extends AppCompatActivity {
 
-    static final int REQUEST_TAKE_PHOTO = 1;
     // Stores the most recent filepath for saved image
-    String mCurrentPhotoPath;
+    private String mCurrentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_note);
-    }
+        Intent sourceIntent = getIntent();
 
-
-    /**
-     * An event handler for taking a picture. Will take full size image and save it.
-     *
-     * @param view The View that calls the event handler
-     */
-//    https://developer.android.com/training/camera/photobasics
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void dispatchTakePictureIntent(View view) {
-        Log.e("FROM ANDROID STUDIO:", "TEST");
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-                Log.e("FROM ANDROID STUDIO", "Could not Create Image File Placeholder");
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.android.fileprovider",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            } else {
-                Log.e("FROM ANDROID STUDIO", "THIS PHOTOFILE IS NULL");
-            }
-        }
-    }
-
-
-    /**
-     * Creates a collision resistant file path that will attach to an image.
-     *
-     * @return A file object with a file name based on the current time
-     * @throws IOException Will throw if file creation messes up along the way. Most likely due to a getExternalFilesDir() call.
-     */
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
+        mCurrentPhotoPath = sourceIntent.getStringExtra(MainActivity.FILE_PATH_KEY);
+        setPic();
     }
 
     /**
-     * Sets the imageview on the screen to show a bitmap of the most recent image taken.
+     * Method for resizing Bitmaps Accessed from
+     * https://developer.android.com/training/camera/photobasics
+     * on 7/9/2018
      *
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * All methods for reorienting Bitmap Accessed from
+     * https://stackoverflow.com/questions/20478765/how-to-get-the-correct-orientation-of-the-image-selected-from-the-default-image
+     * on 7/9/2018
      */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            setPic();
-        }
-    }
     private void setPic() {
         ImageView mImageView = (ImageView) findViewById(R.id.result_image_view);
         // Get the dimensions of the View
-        int targetW = mImageView.getWidth();
-        int targetH = mImageView.getHeight();
+        int targetW = 300;
+        int targetH = 300;
 
         // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -144,7 +85,6 @@ public class NewNoteActivity extends AppCompatActivity {
         return rotateBitmap(bitmap, orientation);
     }
     public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
-
         Matrix matrix = new Matrix();
         switch (orientation) {
             case ExifInterface.ORIENTATION_NORMAL:
