@@ -1,5 +1,6 @@
 package com.example.eyoon.collegegrind;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -7,6 +8,7 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
@@ -39,24 +41,28 @@ public class OpenNoteActivity extends AppCompatActivity {
         populateNotesListView();
     }
 
+    /**
+     * Gets files from the local storage on the device, and overwrites into the notesCollection.
+     * Does not return anything.
+     */
     private void retrieveNotesFromFileSystem()
     {
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         List<File> files = getListFiles(storageDir);
-
-    }
-    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
-        ParcelFileDescriptor parcelFileDescriptor =
-                getContentResolver().openFileDescriptor(uri, "r");
-        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-        parcelFileDescriptor.close();
-        return image;
+        notesCollection = new Note[files.size()];
+        for(int i = 0; i < notesCollection.length; i++)
+        {
+            File file = files.get(i);
+            String name = file.getName();
+            String path = file.getAbsolutePath();
+            Note note = new Note(name, path);
+            notesCollection[i] = note;
+        }
     }
 
     /**
      * https://stackoverflow.com/questions/9530921/list-all-the-files-from-all-the-folder-in-a-single-list
-     * @param parentDir
+     * @param parentDir The directory where all the pictures are stored.
      * @return List of all files from the selected parent directory
      */
     private List<File> getListFiles(File parentDir) {
@@ -66,7 +72,7 @@ public class OpenNoteActivity extends AppCompatActivity {
             if (file.isDirectory()) {
                 inFiles.addAll(getListFiles(file));
             } else {
-                if(file.getName().endsWith(".csv")){
+                if(file.getName().endsWith(".jpg")){
                     inFiles.add(file);
                 }
             }
@@ -79,13 +85,8 @@ public class OpenNoteActivity extends AppCompatActivity {
      */
     private void populateNotesListView()
     {
-        String[] sampleStringArray = { "x", "y", "wqw", "falkwe", "a", "y", "weoriu", "weeooeeoo",
-        "asdflkjlk", "asdfjkl;", "asdfjkl;asjiowe", "asl;kvnoweinvo;wienfokasjldfk", "aweirpoawiejvpoiawnevio0nawoeivnopawienvpoiawnepvoiawnepovinawpoeivnpaoweinvpo"};
-
-        Note[] notes = { new Note("EY", "X"), new Note("OY", "Something") };
-
         ArrayAdapter<Note> notesAdapter = new ArrayAdapter<Note>(this,
-                android.R.layout.simple_list_item_1, notes);
+                android.R.layout.simple_list_item_1, notesCollection);
 
         notesListView.setAdapter(notesAdapter);
 
@@ -96,12 +97,11 @@ public class OpenNoteActivity extends AppCompatActivity {
         // Create a message handling object as an anonymous class.
         AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View v, int position, long id) {
-            // Do something in response to the click]
-            Note clickedNote = notesCollection[position];
-            Toast.makeText(getApplicationContext(), "Clicked!", Toast.LENGTH_LONG).show();
+                // Do something in response to the click]
+                Note clickedNote = notesCollection[position];
+                openUpImageViewer(clickedNote.getFilePath());
             }
         };
-
         view.setOnItemClickListener(mMessageClickedHandler);
     }
 
@@ -113,5 +113,15 @@ public class OpenNoteActivity extends AppCompatActivity {
         notesListView = findViewById(R.id.notes_list_view);
     }
 
+    /**
+     * Send a file path to a picture that will open up in the Image viewing activity.
+     * @param filePath absolute file path to the image.
+     */
+    private void openUpImageViewer(String filePath)
+    {
+        Intent viewImageIntent = new Intent(this, NewNoteActivity.class);
+        viewImageIntent.putExtra(MainActivity.FILE_PATH_KEY, filePath);
+        startActivity(viewImageIntent);
+    }
 
 }

@@ -1,13 +1,14 @@
 package com.example.eyoon.collegegrind;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 public class Note {
     private static final String DEFAULT_FILE_NAME = "<No Name>";
 
     private String fileName;
     private String filePath;
-    private Bitmap thumbNail;
+    private Bitmap bitmap;
 
     public Note(String pFilePath)
     {
@@ -17,6 +18,7 @@ public class Note {
     {
         fileName = pFileName;
         filePath = pFilePath;
+
     }
 
     public String getFileName()
@@ -31,11 +33,6 @@ public class Note {
     @Override
     public String toString()
     {
-        return getFilePath();
-    }
-
-    private void loadFileInformation()
-    {
-        
+        return getFileName();
     }
 }
