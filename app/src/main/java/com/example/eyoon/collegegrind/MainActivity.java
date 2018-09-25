@@ -106,11 +106,24 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            Intent recentImageIntent = new Intent(this, NewNoteActivity.class);
-            recentImageIntent.putExtra(FILE_PATH_KEY, mCurrentPhotoPath);
-            startActivity(recentImageIntent);
+        if (requestCode == REQUEST_TAKE_PHOTO) {
+            if(resultCode != RESULT_OK)
+            {
+                // There is no picture inside the file, delete the empty file
+                File currentPhotoFile = new File(mCurrentPhotoPath);
+                // Deletion code Accessed at https://stackoverflow.com/questions/3554722/how-to-delete-internal-storage-file-in-android
+                // on 9-25-2018
+                boolean deleted = currentPhotoFile.delete();
+                Log.e("DEBUGTEST", "DELETED " + mCurrentPhotoPath);
+            }
+            else
+            {
+                Intent recentImageIntent = new Intent(this, MainActivity.class);
+                recentImageIntent.putExtra(FILE_PATH_KEY, mCurrentPhotoPath);
 
+                startActivity(recentImageIntent);
+                Log.e("DEBUGTEST", "NO DELETION");
+            }
         }
     }
 }

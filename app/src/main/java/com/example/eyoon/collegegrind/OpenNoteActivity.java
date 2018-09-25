@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Debug;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -117,11 +120,20 @@ public class OpenNoteActivity extends AppCompatActivity {
      * Send a file path to a picture that will open up in the Image viewing activity.
      * @param filePath absolute file path to the image.
      */
-    private void openUpImageViewer(String filePath)
+    public void openUpImageViewer(String filePath)
     {
-        Intent viewImageIntent = new Intent(this, NewNoteActivity.class);
-        viewImageIntent.putExtra(MainActivity.FILE_PATH_KEY, filePath);
-        startActivity(viewImageIntent);
+        File photoFile = new File(filePath);
+        Uri data = FileProvider.getUriForFile(this,
+                "com.example.android.fileprovider",
+                photoFile);
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, data);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(intent);
+
+//        // Old code for using ImageEngine to view images
+//        Intent viewImageIntent = new Intent(this, NewNoteActivity.class);
+//        viewImageIntent.putExtra(MainActivity.FILE_PATH_KEY, filePath);
+//        startActivity(viewImageIntent);
     }
 
 }
