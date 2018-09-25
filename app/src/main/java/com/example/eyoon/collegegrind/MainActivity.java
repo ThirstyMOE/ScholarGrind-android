@@ -114,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
                 // Deletion code Accessed at https://stackoverflow.com/questions/3554722/how-to-delete-internal-storage-file-in-android
                 // on 9-25-2018
                 boolean deleted = currentPhotoFile.delete();
-                Log.e("DEBUGTEST", "DELETED " + mCurrentPhotoPath);
             }
             else
             {
@@ -122,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
                 recentImageIntent.putExtra(FILE_PATH_KEY, mCurrentPhotoPath);
 
                 startActivity(recentImageIntent);
-                Log.e("DEBUGTEST", "NO DELETION");
             }
         }
     }

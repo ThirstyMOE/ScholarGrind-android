@@ -1,7 +1,6 @@
 package com.example.eyoon.collegegrind;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 public class Note {
     private static final String DEFAULT_FILE_NAME = "<No Name>";

@@ -1,27 +1,17 @@
 package com.example.eyoon.collegegrind;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Debug;
 import android.os.Environment;
-import android.os.ParcelFileDescriptor;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import java.io.Console;
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,6 +108,7 @@ public class OpenNoteActivity extends AppCompatActivity {
 
     /**
      * Send a file path to a picture that will open up in the Image viewing activity.
+     * TODO: Find a way to refactor this code if possible
      * @param filePath absolute file path to the image.
      */
     public void openUpImageViewer(String filePath)

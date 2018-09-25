@@ -10,6 +10,7 @@ import java.io.IOException;
 
 /**
  * A class full of static methods designed for setting content of ImageViews
+ * Essentially deprecated now
  */
 public class ImageEngine {
     private final static int DEFAULT_DIMENSION = 300;
