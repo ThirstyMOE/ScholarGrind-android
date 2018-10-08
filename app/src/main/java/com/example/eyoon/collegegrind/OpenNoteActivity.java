@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,7 +23,7 @@ import java.util.List;
 public class OpenNoteActivity extends AppCompatActivity {
 
     private ListView notesListView;
-    private Note[] notesCollection;
+    private ArrayList<Note> notesCollection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +43,16 @@ public class OpenNoteActivity extends AppCompatActivity {
     {
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         List<File> files = getListFiles(storageDir);
-        notesCollection = new Note[files.size()];
-        for(int i = 0; i < notesCollection.length; i++)
+        notesCollection = new ArrayList<Note>(files.size());
+        for(int i = 0; i < files.size(); i++)
         {
             File file = files.get(i);
             String name = file.getName();
             String path = file.getAbsolutePath();
             Note note = new Note(name, path);
-            notesCollection[i] = note;
+            notesCollection.add(note);
         }
+        Log.e("TEST", "" + notesCollection.size());
     }
 
     /**
@@ -78,12 +80,13 @@ public class OpenNoteActivity extends AppCompatActivity {
      */
     private void populateNotesListView()
     {
-        ArrayAdapter<Note> notesAdapter = new ArrayAdapter<Note>(this,
-                android.R.layout.simple_list_item_1, notesCollection);
+        NoteAdapter notesAdapter = new NoteAdapter(this, notesCollection);
+//        ArrayAdapter<Note> notesAdapter = new ArrayAdapter<Note>(this,
+//                android.R.layout.simple_list_item_1, notesCollection);
 
         notesListView.setAdapter(notesAdapter);
 
-        attachItemClickListener(notesListView);
+//        attachItemClickListener(notesListView);
     }
     private void attachItemClickListener(AdapterView view)
     {
@@ -91,11 +94,12 @@ public class OpenNoteActivity extends AppCompatActivity {
         AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View v, int position, long id) {
                 // Do something in response to the click]
-                Note clickedNote = notesCollection[position];
+                Note clickedNote = notesCollection.get(position);
                 openUpImageViewer(clickedNote.getFilePath());
             }
         };
         view.setOnItemClickListener(mMessageClickedHandler);
+
     }
 
     /**
@@ -120,6 +124,13 @@ public class OpenNoteActivity extends AppCompatActivity {
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW, data);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivity(intent);
+
+//        File photoFile = getExternalFilesDir(filePath + "/..");
+//        Uri data = Uri.fromFile(photoFile);
+//        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, data);
+//        intent.setType("image/*");
+//        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//        startActivity(intent);
 
 //        // Old code for using ImageEngine to view images
 //        Intent viewImageIntent = new Intent(this, NewNoteActivity.class);
